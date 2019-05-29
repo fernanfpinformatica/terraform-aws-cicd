@@ -30,14 +30,6 @@ variable "env" {
   description = "Elastic Beanstalk environment name. If not provided or set to empty string, the ``Deploy`` stage of the pipeline will not be created"
 }
 
-variable "github_oauth_token" {
-  description = "GitHub Oauth Token with permissions to access private repositories"
-}
-
-variable "repo_owner" {
-  description = "GitHub Organization or Person name"
-}
-
 variable "repo_name" {
   description = "GitHub repository name of the application to be built (and deployed to Elastic Beanstalk if configured)"
 }
