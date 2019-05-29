@@ -146,7 +146,6 @@ module "build" {
   aws_account_id        = "${signum(length(var.aws_account_id)) == 1 ? var.aws_account_id : data.aws_caller_identity.default.account_id}"
   image_repo_name       = "${var.image_repo_name}"
   image_tag             = "${var.image_tag}"
-  github_token          = "${var.github_oauth_token}"
   environment_variables = "${var.environment_variables}"
 }
 
@@ -188,16 +187,14 @@ resource "aws_codepipeline" "source_build_deploy" {
     action {
       name             = "Source"
       category         = "Source"
-      owner            = "ThirdParty"
-      provider         = "GitHub"
+      owner            = "AWS"
+      provider         = "CodeCommit"
       version          = "1"
       output_artifacts = ["code"]
 
       configuration {
-        OAuthToken           = "${var.github_oauth_token}"
-        Owner                = "${var.repo_owner}"
-        Repo                 = "${var.repo_name}"
-        Branch               = "${var.branch}"
+        RepositoryName = "${var.repo_name}"
+        BranchName     = "${var.branch}"
         PollForSourceChanges = "${var.poll_source_changes}"
       }
     }
@@ -258,16 +255,14 @@ resource "aws_codepipeline" "source_build" {
     action {
       name             = "Source"
       category         = "Source"
-      owner            = "ThirdParty"
-      provider         = "GitHub"
+      owner            = "AWS"
+      provider         = "CodeCommit"
       version          = "1"
       output_artifacts = ["code"]
 
       configuration {
-        OAuthToken           = "${var.github_oauth_token}"
-        Owner                = "${var.repo_owner}"
-        Repo                 = "${var.repo_name}"
-        Branch               = "${var.branch}"
+        RepositoryName = "${var.repo_name}"
+        BranchName     = "${var.branch}"
         PollForSourceChanges = "${var.poll_source_changes}"
       }
     }
