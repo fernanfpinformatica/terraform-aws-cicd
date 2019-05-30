@@ -123,3 +123,8 @@ variable "code_commit_account_id" {
   type = "string"
   description = "Self descriptive"
 }
+
+variable "cross_account_assume_role" {
+  type = "string"
+  description = "The role name create in the CodeCommit source account to assume by CodePipeline service"
+}
