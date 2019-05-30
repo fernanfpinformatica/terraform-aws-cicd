@@ -259,6 +259,9 @@ resource "aws_codepipeline" "source_build_deploy" {
       version          = "1"
       output_artifacts = ["code"]
 
+      // TODO: Pass role name as argument variable
+      roleArn = "arn:aws:iam::${var.code_commit_account_id}:role/CrossAccountCodePipelineAccess"
+
       configuration {
         RepositoryName = "${var.repo_name}"
         BranchName     = "${var.branch}"
@@ -326,6 +329,9 @@ resource "aws_codepipeline" "source_build" {
       provider         = "CodeCommit"
       version          = "1"
       output_artifacts = ["code"]
+
+      // TODO: Pass role name as argument variable
+      roleArn = "arn:aws:iam::${var.code_commit_account_id}:role/CrossAccountCodePipelineAccess"
 
       configuration {
         RepositoryName = "${var.repo_name}"
