@@ -118,3 +118,8 @@ variable "environment_variables" {
 
   description = "A list of maps, that contain both the key 'name' and the key 'value' to be used as additional environment variables for the build."
 }
+
+variable "code_commit_account_id" {
+  type = "string"
+  description = "Self descriptive"
+}

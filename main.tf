@@ -13,10 +13,46 @@ module "label" {
   tags       = "${var.tags}"
 }
 
+module "kms_key" {
+  source                  = "git::https://github.com/cloudposse/terraform-aws-kms-key.git?ref=master"
+  namespace               = "${var.namespace}"
+  stage                   = "${var.stage}"
+  name                    = "codepipeline"
+  description             = "KMS key for CodePipeline"
+}
+
 resource "aws_s3_bucket" "default" {
   bucket = "${module.label.id}"
   acl    = "private"
   tags   = "${module.label.tags}"
+}
+
+resource "aws_s3_bucket_policy" "default" {
+  bucket = "${aws_s3_bucket.default.id}"
+
+  policy = <<POLICY
+{
+    "Sid": "",
+    "Effect": "Allow",
+    "Principal": {
+        "AWS": "arn:aws:iam::${var.code_commit_account_id}:root"
+    },
+    "Action": [
+        "s3:Get*",
+        "s3:Put*"
+    ],
+    "Resource": "arn:aws:s3:::${aws_s3_bucket.default.id}/*"
+},
+{
+    "Sid": "",
+    "Effect": "Allow",
+    "Principal": {
+        "AWS": "arn:aws:iam::${var.code_commit_account_id}:root"
+    },
+    "Action": "s3:ListBucket",
+    "Resource": "arn:aws:s3:::${aws_s3_bucket.default.id}"
+}
+POLICY
 }
 
 resource "aws_iam_role" "default" {
@@ -101,6 +137,32 @@ data "aws_iam_policy_document" "s3" {
       "${aws_s3_bucket.default.arn}",
       "${aws_s3_bucket.default.arn}/*",
       "arn:aws:s3:::elasticbeanstalk*",
+    ]
+
+    effect = "Allow"
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "cross_account_code_commit" {
+  role       = "${aws_iam_role.default.id}"
+  policy_arn = "${aws_iam_policy.cross_account_code_commit.arn}"
+}
+
+resource "aws_iam_policy" "cross_account_code_commit" {
+  name   = "${module.label.id}-code-commit"
+  policy = "${data.aws_iam_policy_document.cross_account_code_commit.json}"
+}
+
+data "aws_iam_policy_document" "cross_account_code_commit" {
+  statement {
+    sid = ""
+
+    actions = [
+      "sts:AssumeRole"
+    ]
+
+    resources = [
+      "arn:aws:iam::${var.code_commit_account_id}:role/*",
     ]
 
     effect = "Allow"
