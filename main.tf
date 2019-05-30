@@ -27,7 +27,7 @@ resource "aws_s3_bucket" "default" {
   tags   = "${module.label.tags}"
 }
 
-resource "aws_s3_bucket_policy" "default" {
+resource "aws_s3_bucket_policy" "default_put_delete" {
   bucket = "${aws_s3_bucket.default.id}"
 
   policy = <<POLICY
@@ -42,7 +42,14 @@ resource "aws_s3_bucket_policy" "default" {
         "s3:Put*"
     ],
     "Resource": "arn:aws:s3:::${aws_s3_bucket.default.id}/*"
-},
+}
+POLICY
+}
+
+resource "aws_s3_bucket_policy" "default_list" {
+  bucket = "${aws_s3_bucket.default.id}"
+
+  policy = <<POLICY
 {
     "Sid": "",
     "Effect": "Allow",
