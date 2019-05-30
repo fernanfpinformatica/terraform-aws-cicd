@@ -27,37 +27,35 @@ resource "aws_s3_bucket" "default" {
   tags   = "${module.label.tags}"
 }
 
-resource "aws_s3_bucket_policy" "default_put_delete" {
+resource "aws_s3_bucket_policy" "default" {
   bucket = "${aws_s3_bucket.default.id}"
 
   policy = <<POLICY
 {
-    "Sid": "",
-    "Effect": "Allow",
-    "Principal": {
-        "AWS": "arn:aws:iam::${var.code_commit_account_id}:root"
-    },
-    "Action": [
-        "s3:Get*",
-        "s3:Put*"
-    ],
-    "Resource": "arn:aws:s3:::${aws_s3_bucket.default.id}/*"
-}
-POLICY
-}
-
-resource "aws_s3_bucket_policy" "default_list" {
-  bucket = "${aws_s3_bucket.default.id}"
-
-  policy = <<POLICY
-{
-    "Sid": "",
-    "Effect": "Allow",
-    "Principal": {
-        "AWS": "arn:aws:iam::${var.code_commit_account_id}:root"
-    },
-    "Action": "s3:ListBucket",
-    "Resource": "arn:aws:s3:::${aws_s3_bucket.default.id}"
+  "Version": "2012-10-17",
+  "Id": "list",
+  "Statement": [
+    {
+        "Sid": "",
+        "Effect": "Allow",
+        "Principal": {
+            "AWS": "arn:aws:iam::${var.code_commit_account_id}:root"
+        },
+        "Action": "s3:ListBucket",
+        "Resource": "arn:aws:s3:::${aws_s3_bucket.default.id}"
+    },{
+      "Sid": "",
+      "Effect": "Allow",
+      "Principal": {
+          "AWS": "arn:aws:iam::${var.code_commit_account_id}:root"
+      },
+      "Action": [
+          "s3:Get*",
+          "s3:Put*"
+      ],
+      "Resource": "arn:aws:s3:::${aws_s3_bucket.default.id}/*"
+    }
+  ]
 }
 POLICY
 }
