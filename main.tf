@@ -136,6 +136,11 @@ data "aws_iam_policy_document" "s3" {
       "s3:GetObjectVersion",
       "s3:GetBucketVersioning",
       "s3:PutObject",
+      "kms:Encrypt",
+      "kms:Decrypt",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:DescribeKey"
     ]
 
     resources = [
