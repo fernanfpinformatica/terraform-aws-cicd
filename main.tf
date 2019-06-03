@@ -195,6 +195,11 @@ data "aws_iam_policy_document" "codebuild" {
 
     actions = [
       "codebuild:*",
+      "kms:Encrypt",
+      "kms:Decrypt",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:DescribeKey"
     ]
 
     resources = ["${module.build.project_id}"]
