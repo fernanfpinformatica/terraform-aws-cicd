@@ -136,17 +136,38 @@ data "aws_iam_policy_document" "s3" {
       "s3:GetObjectVersion",
       "s3:GetBucketVersioning",
       "s3:PutObject",
-      "kms:Encrypt",
-      "kms:Decrypt",
-      "kms:ReEncrypt*",
-      "kms:GenerateDataKey*",
-      "kms:DescribeKey"
     ]
 
     resources = [
       "${aws_s3_bucket.default.arn}",
       "${aws_s3_bucket.default.arn}/*",
       "arn:aws:s3:::elasticbeanstalk*",
+    ]
+
+    effect = "Allow"
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "s3" {
+  role       = "${aws_iam_role.default.id}"
+  policy_arn = "${aws_iam_policy.s3_kms.arn}"
+}
+
+resource "aws_iam_policy" "s3_kms" {
+  name   = "${module.label.id}-s3-kms"
+  policy = "${data.aws_iam_policy_document.s3_kms.json}"
+}
+
+data "aws_iam_policy_document" "s3_kms" {
+  statement {
+    sid = ""
+
+    actions = [
+      "kms:*"
+    ]
+
+    resources = [
+      "${module.kms_key.key_arn}"
     ]
 
     effect = "Allow"
