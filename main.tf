@@ -39,7 +39,12 @@ resource "aws_s3_bucket_policy" "default" {
         "Sid": "",
         "Effect": "Allow",
         "Principal": {
-            "AWS": "arn:aws:iam::${var.code_commit_account_id}:root"
+            "AWS": "arn:aws:iam::${var.code_commit_account_id}:root",
+            "kms:Encrypt",
+            "kms:Decrypt",
+            "kms:ReEncrypt*",
+            "kms:GenerateDataKey*",
+            "kms:DescribeKey"
         },
         "Action": "s3:ListBucket",
         "Resource": "arn:aws:s3:::${aws_s3_bucket.default.id}"
@@ -51,7 +56,12 @@ resource "aws_s3_bucket_policy" "default" {
       },
       "Action": [
           "s3:Get*",
-          "s3:Put*"
+          "s3:Put*",
+          "kms:Encrypt",
+          "kms:Decrypt",
+          "kms:ReEncrypt*",
+          "kms:GenerateDataKey*",
+          "kms:DescribeKey"
       ],
       "Resource": "arn:aws:s3:::${aws_s3_bucket.default.id}/*"
     }
@@ -136,6 +146,11 @@ data "aws_iam_policy_document" "s3" {
       "s3:GetObjectVersion",
       "s3:GetBucketVersioning",
       "s3:PutObject",
+      "kms:Encrypt",
+      "kms:Decrypt",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:DescribeKey"
     ]
 
     resources = [
