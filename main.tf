@@ -163,7 +163,7 @@ data "aws_iam_policy_document" "s3" {
   }
 }
 
-resource "aws_iam_role_policy_attachment" "s3" {
+resource "aws_iam_role_policy_attachment" "s3_kms" {
   role       = "${aws_iam_role.default.id}"
   policy_arn = "${aws_iam_policy.s3_kms.arn}"
 }
